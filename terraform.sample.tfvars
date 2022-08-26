@@ -11,7 +11,7 @@ tags = {
 }
 
 # EventBridge event schedules automatic Lambda fn invocation
-rg_sync_event_schedule = "cron(0 1 * * ? *)"
+rgta_sync_event_schedule = "cron(0 1 * * ? *)"
 
 # AWS Regions to scan for finding resources
 resource_regions = [ "eu-west-1", "eu-west-2" ]

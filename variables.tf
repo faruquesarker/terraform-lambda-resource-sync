@@ -17,7 +17,7 @@ variable "tags" {
   default     = {}
 }
 
-variable "rg_sync_event_schedule" {
+variable "rgta_sync_event_schedule" {
   description = "CRON or rate expression for scheduling RGTA-Sync Lambda function"
 
   type    = string
