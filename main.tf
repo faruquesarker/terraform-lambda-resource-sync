@@ -5,10 +5,10 @@ resource "aws_dynamodb_table" "aws_cost_optimization" {
   name         = "AWSCostOptimization"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "EnvironmentName"
-  range_key    = "Creator"
+  range_key    = "Owner"
 
   attribute {
-    name = "Creator"
+    name = "Owner"
     type = "S"
   }
 

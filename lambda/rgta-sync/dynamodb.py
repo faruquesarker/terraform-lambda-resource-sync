@@ -6,7 +6,7 @@ sort_key = "Owner"
 
 TAG_KEY_CREATOR = "Owner"
 TAG_KEY_ENV_NAME = "EnvironmentName"
-TAG_VALUE_NO_CREATOR = "NoCreatorTag"
+TAG_VALUE_NO_OWNER = "NoOwnerTag"
 
 
 def recreate_table(dynamodb_client, table_name):
@@ -35,10 +35,10 @@ def recreate_table(dynamodb_client, table_name):
         'TableName': table_name,
         'KeySchema': [
             { 'AttributeName': 'EnvironmentName', 'KeyType': 'HASH'},
-            {'AttributeName': 'Creator', 'KeyType': 'RANGE'}
+            {'AttributeName': 'Owner', 'KeyType': 'RANGE'}
         ],
         'AttributeDefinitions': [
-            {'AttributeName': 'Creator', 'AttributeType': 'S'},
+            {'AttributeName': 'Owner', 'AttributeType': 'S'},
             {'AttributeName': 'EnvironmentName', 'AttributeType': 'S'}
         ],
         'BillingMode': 'PAY_PER_REQUEST'
@@ -56,15 +56,15 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
     firt_resource = resources[0]
     res_arn = firt_resource.get('ResourceARN')
     tags = firt_resource.get("Tags")
-    creator = None
+    owner = None
     for tag in tags:        
         if tag.get('Key') == TAG_KEY_CREATOR:
-            creator = tag.get('Value')
+            owner = tag.get('Value')
             break
             
-    if not creator:
-        print(f"Found env without Creator: {app_env}")
-        creator = TAG_VALUE_NO_CREATOR
+    if not owner:
+        print(f"Found env without Owner: {app_env}")
+        owner = TAG_VALUE_NO_OWNER
             
     try:
         print(f"Fetching App env data from DynamoDB {app_env}")
@@ -72,7 +72,7 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
                     TableName=dynamodb_table_name,
                     Key={
                         "EnvironmentName": {"S": app_env },
-                        "Creator": {"S": creator }
+                        "Owner": {"S": owner }
                         }
                    )
         item = response["Item"]
@@ -87,7 +87,7 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
                         TableName=dynamodb_table_name,
                         Item={
                         "EnvironmentName": {"S": app_env },
-                        "Creator": {"S": creator },
+                        "Owner": {"S": owner },
                         "CreationDate": {"S": create_date},
                         }
                     )
@@ -116,7 +116,7 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
                             TableName=dynamodb_table_name,
                             Key={
                                 "EnvironmentName": {"S": app_env },
-                                 "Creator": {"S": creator }
+                                 "Owner": {"S": owner }
                             },
                             AttributeUpdates={
                                 "CreationDate": {
