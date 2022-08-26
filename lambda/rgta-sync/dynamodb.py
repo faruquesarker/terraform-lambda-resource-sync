@@ -4,7 +4,7 @@ import ec2
 partition_key = "EnvironmentName"
 sort_key = "Owner"
 
-TAG_KEY_CREATOR = "Owner"
+TAG_KEY_OWNER = "Owner"
 TAG_KEY_ENV_NAME = "EnvironmentName"
 TAG_VALUE_NO_OWNER = "NoOwnerTag"
 
@@ -58,7 +58,7 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
     tags = firt_resource.get("Tags")
     owner = None
     for tag in tags:        
-        if tag.get('Key') == TAG_KEY_CREATOR:
+        if tag.get('Key') == TAG_KEY_OWNER:
             owner = tag.get('Value')
             break
             
@@ -96,7 +96,7 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
         for res in resources:
             res_arn = res.get('ResourceARN')
             identifier = res_arn.split("/")[-1]
-            [env_name, tag_name, env_id, env_type, expiration, owner, product, version, launched_by] = [str(x*0) for x in range(9) ]
+            [env_name, owner] = [str(x*0) for x in range(2) ]
             tags = res.get("Tags")
             for tag in tags:
                 if tag.get('Key') == TAG_KEY_ENV_NAME:
