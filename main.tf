@@ -131,7 +131,7 @@ resource "aws_s3_bucket_object" "lambda_rgta_sync" {
 }
 
 resource "aws_lambda_function" "rgta_sync" {
-  function_name = "MS360-AWS-Cost-Optimization-ResourceGroupsTaggingAPI-Sync"
+  function_name = "AWS-Cost-Optimization-ResourceGroupsTaggingAPI-Sync"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
   s3_key    = aws_s3_bucket_object.lambda_rgta_sync.key
