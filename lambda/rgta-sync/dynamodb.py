@@ -2,9 +2,9 @@ import boto3
 import ec2
 
 partition_key = "EnvironmentName"
-sort_key = "Creator"
+sort_key = "Owner"
 
-TAG_KEY_CREATOR = "Creator"
+TAG_KEY_CREATOR = "Owner"
 TAG_KEY_ENV_NAME = "EnvironmentName"
 TAG_VALUE_NO_CREATOR = "NoCreatorTag"
 
