@@ -112,9 +112,10 @@ def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
                             TableName=dynamodb_table_name,
                             Key={
                                 "EnvironmentName": {"S": app_env },
-                                 "Owner": {"S": owner }
+                                 "Owner": {"S": owner }                                 
                             },
                             AttributeUpdates={
+                                "Region": {"S": region },
                                 resource : {
                                     'Value': {
                                        'M': {
