@@ -43,7 +43,7 @@ def lambda_handler(event, context):
 
         # Get a list if envs
         app_envs = rgta.get_tag_values(rgta_client)
-        LOG.info(f"Got App envs: {app_envs} ")
+        LOG.info(f"AWS Rgion: {region} -> Got app envs: {app_envs} ")
 
         ## Update DynamoDB Table
         for app_env in app_envs:
