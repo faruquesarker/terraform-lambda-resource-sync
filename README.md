@@ -16,5 +16,4 @@ To run the AWS Lambda function in a different time, update the cron schedule for
 *   `rg_sync_event_schedule`
 
 
-!!! important
-    Make sure that the cron job schedule expression is compliant with [AWS guidelines](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html).
+The Cron job schedule expression must be compliant with [AWS guidelines](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html).
