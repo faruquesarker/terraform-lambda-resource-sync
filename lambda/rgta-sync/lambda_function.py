@@ -37,14 +37,15 @@ def lambda_handler(event, context):
         'body': json.dumps('Failed to re-create DynamoDB table!')
     }
     
-    rgta_client = boto3.client('resourcegroupstaggingapi')
-
-    # Get a list if envs
-    app_envs = rgta.get_tag_values(rgta_client)
-    LOG.info(f"Got App envs: {app_envs} ")
-
-    ## Update DynamoDB Table
     for region in get_resource_regions():
+        config = Config(region_name=region)
+        rgta_client = boto3.client('resourcegroupstaggingapi', config=config)
+
+        # Get a list if envs
+        app_envs = rgta.get_tag_values(rgta_client)
+        LOG.info(f"Got App envs: {app_envs} ")
+
+        ## Update DynamoDB Table
         for app_env in app_envs:
             resources = rgta.get_resources(rgta_client, app_env)
             LOG.info(f"App env: {app_env} has resource count: " + str(len(resources)))
