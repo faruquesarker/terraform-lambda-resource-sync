@@ -10,11 +10,9 @@ import dynamodb
 LOG = logging.getLogger()
 LOG.setLevel(logging.INFO)
 
-print('Loading Lambda function rgta_sync...')
+LOG.info('Loading Lambda function rgta_sync...')
 
 rgta_client = boto3.client('resourcegroupstaggingapi')
-
-ec2_client = boto3.client('ec2')
 
 dynamodb_client = boto3.client('dynamodb')
 COST_REPORT_DDB_TABLE_NAME = os.environ.get("COST_REPORT_DDB_TABLE_NAME")
@@ -46,12 +44,13 @@ def lambda_handler(event, context):
     LOG.info(f"Got App envs: {app_envs} ")
 
     ## Update DynamoDB Table
-    for app_env in app_envs:
-        resources = rgta.get_resources(rgta_client, app_env)
-        LOG.info(f"App env: {app_env} has resource count: " + str(len(resources)))
-        added_to_table = dynamodb.add_app_env(dynamodb_client, app_env, resources, COST_REPORT_DDB_TABLE_NAME)
-        if added_to_table:
-            print(" App Env : " + app_env + " sync'd to DynamoDB table: " + str(len(resources)))
+    for region in get_resource_regions():
+        for app_env in app_envs:
+            resources = rgta.get_resources(rgta_client, app_env)
+            LOG.info(f"App env: {app_env} has resource count: " + str(len(resources)))
+            added_to_table = dynamodb.add_app_env(dynamodb_client, app_env, resources, COST_REPORT_DDB_TABLE_NAME)
+            if added_to_table:
+                LOG.info(f"App Env : {app_env} from region: {region} sync'd to DynamoDB table: " + str(len(resources)))
 
     
     return {

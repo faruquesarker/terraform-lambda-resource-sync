@@ -17,7 +17,7 @@ def recreate_table(dynamodb_client, table_name):
     If DynamoDB `table_name` exists then drop it and then re-create
     """
     try:
-        print(f"Re-creating DynamoDB table {table_name}")
+        LOG.info(f"Re-creating DynamoDB table {table_name}")
         # Get the table details
         response = dynamodb_client.describe_table(TableName=table_name)
 
@@ -27,11 +27,11 @@ def recreate_table(dynamodb_client, table_name):
             # Delete table if it exists
             table = dyn_resource.Table(table_name)
             table.delete()
-            print(f"Deleting {table.name}...")
+            LOG.info(f"Deleting {table.name}...")
             table.wait_until_not_exists()
 
         else:
-            print(f"DynaoDB table: {table_name} doesn't exist!")
+            LOG.info(f"DynaoDB table: {table_name} doesn't exist!")
 
         # Now re-create table
         params = {
@@ -47,7 +47,7 @@ def recreate_table(dynamodb_client, table_name):
         'BillingMode': 'PAY_PER_REQUEST'
         }
         table = dyn_resource.create_table(**params)
-        print(f"Creating {table_name}...")
+        LOG.info(f"Creating {table_name}...")
         table.wait_until_exists()
         return table    
     except Exception as e:
@@ -66,11 +66,11 @@ def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
             break
             
     if not owner:
-        print(f"Found env without Owner: {app_env}")
+        LOG.info(f"Found env without Owner: {app_env}")
         owner = TAG_VALUE_NO_OWNER
             
     try:
-        print(f"Fetching App env data from DynamoDB {app_env}")
+        LOG.info(f"Fetching App env data from DynamoDB {app_env}")
         response = dynamodb_client.get_item(
                     TableName=dynamodb_table_name,
                     Key={
@@ -79,10 +79,10 @@ def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
                         }
                    )
         item = response["Item"]
-        print(f"Got from DynamoDB: {item}")
+        LOG.info(f"Got from DynamoDB: {item}")
         return False
     except KeyError:
-        print(f"KeyError - Fetching App env from DynamoDB {app_env}")
+        LOG.info(f"KeyError - Fetching App env from DynamoDB {app_env}")
         # add the app_env to table 
         response =  dynamodb_client.put_item(
                         TableName=dynamodb_table_name,
@@ -91,7 +91,7 @@ def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
                         "Owner": {"S": owner }
                         }
                     )
-        print(f"Put item to DynamoDB table: {app_env} ")
+        LOG.info(f"Put item to DynamoDB table: {app_env} ")
         
         for res in resources:
             res_arn = res.get('ResourceARN')
@@ -131,8 +131,8 @@ def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
                                 }
                             }
                         )
-            print(f"Updated resource {identifier} to DynamoDB ")
+            LOG.info(f"Updated resource {identifier} to DynamoDB ")
         return True
     except Exception as e:
-        print(e)
+        LOG.info(e)
         raise Exception(f"Fetching App env data from DynamoDB {env_name}")
