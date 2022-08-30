@@ -118,10 +118,12 @@ def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
                                  "Owner": {"S": owner }                                 
                             },
                             AttributeUpdates={
-                                "Region": {"S": region },
+                                "Region": {
+                                    "Value": {"S": region }
+                                },
                                 resource : {
-                                    'Value': {
-                                       'M': {
+                                    "Value": {
+                                       "M": {
                                         "Identifier": {"S": identifier},
                                         "Region": {"S": region},
                                         "Service": {"S": service },
