@@ -1,5 +1,8 @@
+import logging
 import boto3
-import ec2
+
+LOG = logging.getLogger()
+LOG.setLevel(logging.INFO)
 
 partition_key = "EnvironmentName"
 sort_key = "Owner"
@@ -101,7 +104,7 @@ def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
                 elif tag.get('Key') == TAG_KEY_OWNER:
                     owner = tag.get('Value', '') 
                 else:
-                    print(f"Unprocessed tag: {tag}")
+                    LOG.DEBUG(f"Unprocessed tag: {tag}")
 
             service = res_arn.split(":")[2]
             type_tmp =  res_arn.split(":")[5]
