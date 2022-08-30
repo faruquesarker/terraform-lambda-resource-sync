@@ -120,7 +120,7 @@ def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
                             AttributeUpdates={
                                 "Region": {
                                     "Value": {"S": region, },
-                                    "Action": "ADD"
+                                    "Action": "PUT"
                                 },
                                 resource : {
                                     "Value": {
