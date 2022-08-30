@@ -53,9 +53,9 @@ def recreate_table(dynamodb_client, table_name):
 
 
 def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_name):
-    firt_resource = resources[0]
-    res_arn = firt_resource.get('ResourceARN')
-    tags = firt_resource.get("Tags")
+    first_resource = resources[0]
+    res_arn = first_resource.get('ResourceARN')
+    tags = first_resource.get("Tags")
     owner = None
     for tag in tags:        
         if tag.get('Key') == TAG_KEY_OWNER:
@@ -80,15 +80,12 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
         return False
     except KeyError:
         print(f"KeyError - Fetching App env from DynamoDB {app_env}")
-        create_date_updated = False
-        create_date = ""
         # add the app_env to table 
         response =  dynamodb_client.put_item(
                         TableName=dynamodb_table_name,
                         Item={
                         "EnvironmentName": {"S": app_env },
-                        "Owner": {"S": owner },
-                        "CreationDate": {"S": create_date},
+                        "Owner": {"S": owner }
                         }
                     )
         print(f"Put item to DynamoDB table: {app_env} ")
@@ -107,9 +104,6 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
             service = res_arn.split(":")[2]
             type_tmp =  res_arn.split(":")[5]
             service_type = type_tmp.split('/')[0]
-            if service_type == 'LaunchTemplate' and (not create_date_updated):
-                create_date = ec2.get_create_date(ec2_client, identifier)
-                create_date_updated = True
             region = res_arn.split(":")[3]
             resource = "Resource" + "." + identifier
             response =  dynamodb_client.update_item(
@@ -119,9 +113,6 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
                                  "Owner": {"S": owner }
                             },
                             AttributeUpdates={
-                                "CreationDate": {
-                                    'Value': { 'S': str(create_date) }
-                                },
                                 resource : {
                                     'Value': {
                                        'M': {
