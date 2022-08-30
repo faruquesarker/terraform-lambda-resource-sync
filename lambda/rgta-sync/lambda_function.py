@@ -43,13 +43,14 @@ def lambda_handler(event, context):
 
     # Get a list if envs
     app_envs = rgta.get_tag_values(rgta_client)
+    LOG.info("Got App envs: " + app_envs)
 
-    # Update DynamoDB Table
-    for app_env in app_envs:
-        resources = rgta.get_resources(rgta_client, app_env)
-        added_to_table = dynamodb.add_app_env(dynamodb_client, ec2_client, app_env, resources, COST_REPORT_DDB_TABLE_NAME)
-        if added_to_table:
-            print(" App Env : " + app_env + " sync'd to DynamoDB table: " + str(len(resources)))
+    ## Update DynamoDB Table
+    # for app_env in app_envs:
+    #     resources = rgta.get_resources(rgta_client, app_env)
+    #     added_to_table = dynamodb.add_app_env(dynamodb_client, ec2_client, app_env, resources, COST_REPORT_DDB_TABLE_NAME)
+    #     if added_to_table:
+    #         print(" App Env : " + app_env + " sync'd to DynamoDB table: " + str(len(resources)))
 
     
     return {
