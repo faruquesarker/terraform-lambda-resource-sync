@@ -52,7 +52,7 @@ def recreate_table(dynamodb_client, table_name):
 
 
 
-def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_name):
+def add_app_env(dynamodb_client, app_env, resources, dynamodb_table_name):
     first_resource = resources[0]
     res_arn = first_resource.get('ResourceARN')
     tags = first_resource.get("Tags")
@@ -97,7 +97,9 @@ def add_app_env(dynamodb_client, ec2_client, app_env, resources, dynamodb_table_
             tags = res.get("Tags")
             for tag in tags:
                 if tag.get('Key') == TAG_KEY_ENV_NAME:
-                    env_name = tag.get('Value', '') 
+                    env_name = tag.get('Value', '')
+                elif tag.get('Key') == TAG_KEY_OWNER:
+                    owner = tag.get('Value', '') 
                 else:
                     print(f"Unprocessed tag: {tag}")
 
